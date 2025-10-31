@@ -1,0 +1,64 @@
+{
+    "version": "2.0.0",
+    "type": "shell",
+    "inputs": [
+        {
+            "id": "mapName",
+            "type": "promptString",
+            "description": "請輸入地圖名稱",
+            "default": "InfiniteTower.w3x"
+        }
+    ],
+    "tasks": [
+        {
+            "label": "執行",
+            "command": "D:\\war3\\ydwe\\ydwe.exe -war3 -loadfile \"${workspaceRoot}\\${input:mapName}\"",
+        },
+        {
+            "label": "配置",
+            "command": "chcp 65001 && \"${workspaceRoot}/tools/w3x2lni/bin/w3x2lni-lua.exe\"",
+            "args": [
+                ".\\tools\\配置.lua",
+                "${workspaceRoot}"
+            ]
+        },
+        {
+            "label": "語法檢查",
+            "command": "${workspaceRoot}\\tools\\jasshelper\\jasshelper.exe",
+            "args": [
+                "${workspaceRoot}\\tools\\jasshelper\\jass\\common.j",
+                "${workspaceRoot}\\tools\\jasshelper\\jass\\blizzard.j",
+                "${workspaceRoot}\\${input:mapName}"
+            ],
+        },
+        {
+            "label": "打包",
+            "command": "chcp 65001 && \"${workspaceRoot}/tools/w3x2lni/w2l.exe\"",
+            "args": [
+                "obj",
+                "${workspaceRoot}\\.w3x",
+                "${workspaceRoot}\\${input:mapName}"
+            ],
+            "dependsOn": ["語法檢查"]
+        },
+        {
+            "label": "解包",
+            "command": "chcp 65001 && \"${workspaceRoot}/tools/w3x2lni/w2l.exe\"",
+            "args": [
+                "lni",
+                "${workspaceRoot}\\${input:mapName}",
+                "${workspaceRoot}",
+            ]
+        },
+        {
+            "label": "發佈",
+            "command": "chcp 65001 && \"${workspaceRoot}/tools/w3x2lni/w2l.exe\"",
+            "args": [
+                "slk",
+                "${workspaceRoot}",
+                "${workspaceRoot}/${input:mapName}"
+            ]
+        }
+    ]
+
+}
