@@ -3,4 +3,4 @@
 条件
 动作
     CustomScriptCode
-        常量: 'call Test_Class_Unit()'
+        常量: 'call TestClassUnit()'

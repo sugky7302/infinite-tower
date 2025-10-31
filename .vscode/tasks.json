@@ -12,12 +12,7 @@
     "tasks": [
         {
             "label": "執行",
-            "type": "shell",
-            "command": "${workspaceFolder}\\.vscode\\run.bat",
-            "args": [
-                "${workspaceRoot}",
-                "${input:mapName}"
-            ],
+            "command": "D:\\war3\\ydwe\\ydwe.exe -war3 -loadfile \"${workspaceRoot}\\.w3x\"",
         },
         {
             "label": "配置",
@@ -38,16 +33,17 @@
         },
         {
             "label": "打包",
-            "command": "chcp 65001 && \"${workspaceRoot}/tools/w3x2lni/w2l.exe\"",
+            "command": "${workspaceRoot}/tools/w3x2lni/w2l.exe",
             "args": [
                 "obj",
-                "${workspaceRoot}",
+                "${workspaceRoot}\\.w3x",
                 "${workspaceRoot}\\${input:mapName}"
             ],
+
         },
         {
             "label": "解包",
-            "command": "chcp 65001 && \"${workspaceRoot}/tools/w3x2lni/w2l.exe\"",
+            "command": "${workspaceRoot}/tools/w3x2lni/w2l.exe",
             "args": [
                 "lni",
                 "${workspaceRoot}\\${input:mapName}",
