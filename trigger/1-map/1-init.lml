@@ -1,0 +1,6 @@
+事件
+    MapInitializationEvent
+条件
+动作
+    CustomScriptCode
+        常量: 'call Print("Welcome to the Infinite Tower! This is a great game")'

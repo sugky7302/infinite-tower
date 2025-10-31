@@ -1,5 +1,2 @@
-library Main initializer main requires Kit
-    private function main takes nothing returns nothing
-        call Kit_print("Hello, Infinite Tower!")
-    endfunction
-endlibrary
+// 匯入所有自定義腳本
+#include "scripts/shared/kit.j"
