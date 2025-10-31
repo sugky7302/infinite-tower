@@ -12,7 +12,12 @@
     "tasks": [
         {
             "label": "執行",
-            "command": "D:\\war3\\ydwe\\ydwe.exe -war3 -loadfile \"${workspaceRoot}\\${input:mapName}\"",
+            "type": "shell",
+            "command": "${workspaceFolder}\\.vscode\\run.bat",
+            "args": [
+                "${workspaceRoot}",
+                "${input:mapName}"
+            ],
         },
         {
             "label": "配置",
@@ -36,10 +41,9 @@
             "command": "chcp 65001 && \"${workspaceRoot}/tools/w3x2lni/w2l.exe\"",
             "args": [
                 "obj",
-                "${workspaceRoot}\\.w3x",
+                "${workspaceRoot}",
                 "${workspaceRoot}\\${input:mapName}"
             ],
-            "dependsOn": ["語法檢查"]
         },
         {
             "label": "解包",
