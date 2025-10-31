@@ -65,10 +65,12 @@ globals
     integer array C_Unit_type
     // 單位對象
     unit array C_Unit_object
+    // 所屬玩家
+    integer array C_Unit_player
 endglobals
 
 // 創建一個新的 Unit 實例
-function C_Unit_New takes player p, integer unit_type, real x, real y, real face returns integer
+function C_Unit_New takes integer p, integer unit_type, real x, real y, real face returns integer
     local integer index = C_Unit_GetIndex()
 
     if index == -1 then
@@ -76,9 +78,10 @@ function C_Unit_New takes player p, integer unit_type, real x, real y, real face
     endif
 
     // 創建單位並初始化變數
-    set C_Unit_object[index] = CreateUnit(p, unit_type, x, y, face)
+    set C_Unit_object[index] = CreateUnit(C_Player_object[p], unit_type, x, y, face)
     set C_Unit_id[index] = GetHandleId(C_Unit_object[index])
     set C_Unit_type[index] = unit_type
+    set C_Unit_player[index] = p
     // 反向綁定 handle id 和 index，方便查找
     call SaveInteger(t, C_Unit_TABLE, C_Unit_id[index], index)
 
@@ -87,23 +90,20 @@ endfunction
 
 // 銷毀一個 Unit 實例
 function C_Unit_Destroy takes integer index returns nothing
-    local unit u = C_Unit_object[index]
-
-    if u != null then
-        call RemoveUnit(u)
-        set C_Unit_object[index] = null
+    if index < 0 then
+        return
     endif
+
+    call RemoveUnit(C_Unit_object[index])
+    set C_Unit_object[index] = null
+
 
     // 清理欄位與反向映射，並把 slot 回收到空閒佇列
     // 清除 table 中的映射（設為 -1 或 0 視實作而定）；使用 0 作為未設定值
-    if C_Unit_id[index] != 0 then
-        call RemoveSavedInteger(t, C_Unit_TABLE, C_Unit_id[index])
-    endif
+    call RemoveSavedInteger(t, C_Unit_TABLE, C_Unit_id[index])
 
     // 釋放指針
     call C_Unit_PutIndex(index)
-
-    set u = null
 endfunction
 
 // 根據 unit 取得對應的 Unit 實例編號，找不到回傳 -1
@@ -136,8 +136,8 @@ endfunction
 
 function TestClassUnit takes nothing returns nothing
     local integer i = 0
-    local player p = Player(0)
     local integer u
+    local integer p = C_Player_New(0)
     local trigger tr = CreateTrigger()
     call TriggerAddCondition(tr, Condition(function Filter_0))
 
