@@ -126,7 +126,8 @@ function C_Unit_SetLifeTime takes integer index, real dur returns nothing
     endif
 endfunction
 
-// 測試函數
+
+//region 單元測試
 function Filter_0 takes nothing returns boolean
     local integer u = C_Unit_Get(GetTriggerUnit())
     call C_Unit_Destroy(u)
