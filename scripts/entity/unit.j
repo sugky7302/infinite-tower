@@ -16,22 +16,22 @@ endglobals
 
 function C_Unit_PutIndex takes integer index returns nothing
     // 目前尾巴指向新索引
-    set C_Unit_g_instance_pool[C_Unit_g_instance_pointer_tail] = index
+    if C_Unit_g_instance_pointer_tail != -1 then
+        set C_Unit_g_instance_pool[C_Unit_g_instance_pointer_tail] = index
+    endif
+    
     // 更新尾巴指針
     set C_Unit_g_instance_pointer_tail = index
 endfunction
 
 // 擴大索引池，防止索引耗盡
 function C_Unit_ExpandIndexPool takes nothing returns nothing
+    // 擴大索引池
     set C_Unit_g_instances_length = C_Unit_g_instances_length + 1
-    // 新增一個索引到索引池中
-    if C_Unit_g_instance_pointer_head == -1 then
-        // 初始情況，頭尾指針都指向新索引
-        set C_Unit_g_instance_pointer_head = C_Unit_g_instances_length - 1
-        set C_Unit_g_instance_pointer_tail = C_Unit_g_instances_length - 1
-    else
-        call C_Unit_PutIndex(C_Unit_g_instances_length - 1)
-    endif
+    // 更新尾巴指針
+    call C_Unit_PutIndex(C_Unit_g_instances_length - 1)
+    // 讓頭指針指向新加入的索引
+    set C_Unit_g_instance_pointer_head = C_Unit_g_instance_pointer_tail
 endfunction
 
 // 從索引池中取得一個可用的索引。
@@ -121,7 +121,7 @@ endfunction
 // 設定 Unit 只能存活一段時間，時間到後自動刪除
 function C_Unit_SetLifeTime takes integer index, real dur returns nothing
     // 若 slot 中沒有單位則不呼叫 API
-    if C_Unit_object[index] != null then
+    if index > -1 then
         call UnitApplyTimedLife(C_Unit_object[index], 'BTLF', dur)
     endif
 endfunction
@@ -145,12 +145,12 @@ function TestClassUnit takes nothing returns nothing
     call TriggerAddCondition(tr, Condition(function Filter_0))
 
     loop
-        exitwhen i >= 10
+        exitwhen i >= 1000
         set u = C_Unit_New(p, 'hfoo', 0.0, 0.0, 0.0)
-        // call C_Unit_SetLifeTime(u, I2R(GetRandomInt(1, 3)))
-        // call TriggerRegisterUnitEvent(tr, C_Unit_object[u], EVENT_UNIT_DEATH)
-        // call TriggerSleepAction(0.02)
-        // call Print("[" + I2S(i) + "] Index(head:" + I2S(C_Unit_g_instance_pointer_head) + "/tail:" + I2S(C_Unit_g_instance_pointer_tail) + ")")
+        call C_Unit_SetLifeTime(u, I2R(GetRandomInt(1, 3)))
+        call TriggerRegisterUnitEvent(tr, C_Unit_object[u], EVENT_UNIT_DEATH)
+        call TriggerSleepAction(0.02)
+        call Print("[" + I2S(i) + "] Index(head:" + I2S(C_Unit_g_instance_pointer_head) + "/tail:" + I2S(C_Unit_g_instance_pointer_tail) + "/size:" + I2S(C_Unit_g_instances_length) + ")")
         set i = i + 1
     endloop
 endfunction
